@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Jenga</string>
+
+    <!-- Main Screen -->
+    <string name="tasks">Aufgaben</string>
+    <string name="play">Spielen</string>
+    <string name="settings">Einstellungen</string>
+
+    <!-- Common -->
+    <string name="back">Zurück</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="add">Hinzufügen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="close">Schließen</string>
+    <string name="none">Keine</string>
+    <string name="unnamed">Unbenannt</string>
+
+    <!-- Tasks -->
+    <string name="task_title">Titel</string>
+    <string name="task_description">Beschreibung (optional)</string>
+    <string name="add_task">Aufgabe hinzufügen</string>
+    <string name="edit_task">Aufgabe bearbeiten</string>
+    <string name="delete_task">Aufgabe löschen</string>
+    <string name="delete_task_confirm">Diese Aufgabe löschen?</string>
+    <string name="no_tasks">Noch keine Aufgaben. Tippe auf + um eine hinzuzufügen.</string>
+    <string name="categories">Kategorien</string>
+    <string name="category_name">Kategoriename</string>
+    <string name="add_category">Kategorie hinzufügen</string>
+    <string name="manage_categories">Kategorien verwalten</string>
+    <string name="delete_category_confirm">Kategorie löschen? Aufgaben in dieser Kategorie werden nicht gelöscht.</string>
+    <string name="no_categories">Noch keine Kategorien.</string>
+    <string name="uncategorized">Ohne Kategorie</string>
+    <string name="search_tasks">Aufgaben suchen</string>
+    <string name="task_title_empty">Titel darf nicht leer sein</string>
+
+    <!-- Game -->
+    <string name="game_setup">Spieleinrichtung</string>
+    <string name="block_count">Blockanzahl</string>
+    <string name="default_52">Standard (52)</string>
+    <string name="reset_to_default">Auf 52 zurücksetzen</string>
+    <string name="distribution">Verteilung</string>
+    <string name="no_distribution">Keine Verteilung (1 Aufgabe pro Block)</string>
+    <string name="manage_distributions">Verteilungen verwalten</string>
+    <string name="task_slots">Aufgabenplätze</string>
+    <string name="slot_label">Platz %1$d (%2$d Block(s))</string>
+    <string name="pick_task">Aufgabe wählen…</string>
+    <string name="start_game">Spiel starten</string>
+    <string name="all_slots_required">Weise jedem Platz eine Aufgabe zu bevor du startest.</string>
+    <string name="game_play">Blocknummer eingeben</string>
+    <string name="block_number_hint">Blocknummer (1–%1$d)</string>
+    <string name="invalid_block_number">Gib eine Zahl zwischen 1 und %1$d ein</string>
+    <string name="end_game">Spiel beenden</string>
+    <string name="end_game_confirm">Aktuelles Spiel beenden?</string>
+    <string name="select_task">Aufgabe auswählen</string>
+    <string name="tasks_needed">Benötigte Aufgaben: %1$d</string>
+    <string name="total_blocks">Gesamte Blöcke: %1$d</string>
+
+    <!-- Distributions -->
+    <string name="distributions">Verteilungen</string>
+    <string name="add_distribution">Verteilung hinzufügen</string>
+    <string name="edit_distribution">Verteilung bearbeiten</string>
+    <string name="delete_distribution">Verteilung löschen</string>
+    <string name="delete_distribution_confirm">Diese Verteilung löschen?</string>
+    <string name="no_distributions">Noch keine Verteilungen. Tippe auf + um eine hinzuzufügen.</string>
+    <string name="distribution_name">Verteilungsname</string>
+    <string name="distribution_name_empty">Name darf nicht leer sein</string>
+    <string name="groups">Gruppen</string>
+    <string name="add_group">Gruppe hinzufügen</string>
+    <string name="group_count_label">Gruppen</string>
+    <string name="blocks_per_group_label">Blöcke je</string>
+    <string name="distribution_total">Gesamt: %1$d Blöcke, %2$d Aufgaben benötigt</string>
+    <string name="distribution_invalid">Alle Gruppenwerte müssen ≥ 1 sein</string>
+
+    <!-- Settings -->
+    <string name="appearance">Erscheinungsbild</string>
+    <string name="theme">Design</string>
+    <string name="light">Hell</string>
+    <string name="dark">Dunkel</string>
+    <string name="system_default">System</string>
+    <string name="language">Sprache</string>
+    <string name="dynamic_colors">Dynamische Farben</string>
+    <string name="dynamic_colors_desc">Farben aus dem Hintergrundbild verwenden (Android 12+)</string>
+    <string name="data">Daten</string>
+    <string name="export_data">Daten exportieren</string>
+    <string name="import_data">Daten importieren</string>
+    <string name="restore_data">Letztes Backup wiederherstellen</string>
+    <string name="export_success">Daten erfolgreich exportiert</string>
+    <string name="export_error">Export fehlgeschlagen</string>
+    <string name="import_success">Daten erfolgreich importiert</string>
+    <string name="import_error">Import fehlgeschlagen</string>
+    <string name="restore_success">Backup erfolgreich wiederhergestellt</string>
+    <string name="restore_error">Wiederherstellung fehlgeschlagen</string>
+    <string name="import_confirm_title">Daten importieren</string>
+    <string name="import_confirm_message">Alle vorhandenen Daten werden ersetzt. Ein Backup wird automatisch erstellt.</string>
+    <string name="restore_confirm_title">Backup wiederherstellen</string>
+    <string name="restore_confirm_message">Alle aktuellen Daten werden durch das Backup des letzten Imports ersetzt.</string>
+    <string name="about">Über die App</string>
+    <string name="app_version">App-Version</string>
+</resources>

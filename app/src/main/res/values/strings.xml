@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Jenga</string>
+
+    <!-- Main Screen -->
+    <string name="tasks">Tasks</string>
+    <string name="play">Play</string>
+    <string name="settings">Settings</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
+    <string name="none">None</string>
+    <string name="unnamed">Unnamed</string>
+
+    <!-- Tasks -->
+    <string name="task_title">Title</string>
+    <string name="task_description">Description (optional)</string>
+    <string name="add_task">Add Task</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="delete_task">Delete Task</string>
+    <string name="delete_task_confirm">Delete this task?</string>
+    <string name="no_tasks">No tasks yet. Tap + to add one.</string>
+    <string name="categories">Categories</string>
+    <string name="category_name">Category name</string>
+    <string name="add_category">Add Category</string>
+    <string name="manage_categories">Manage Categories</string>
+    <string name="delete_category_confirm">Delete category? Tasks in this category will not be deleted.</string>
+    <string name="no_categories">No categories yet.</string>
+    <string name="uncategorized">Uncategorized</string>
+    <string name="search_tasks">Search tasks</string>
+    <string name="task_title_empty">Title cannot be empty</string>
+
+    <!-- Game -->
+    <string name="game_setup">Game Setup</string>
+    <string name="block_count">Block Count</string>
+    <string name="default_52">Default (52)</string>
+    <string name="reset_to_default">Reset to 52</string>
+    <string name="distribution">Distribution</string>
+    <string name="no_distribution">No distribution (1 task per block)</string>
+    <string name="manage_distributions">Manage Distributions</string>
+    <string name="task_slots">Task Slots</string>
+    <string name="slot_label">Slot %1$d (%2$d block(s))</string>
+    <string name="pick_task">Pick task…</string>
+    <string name="start_game">Start Game</string>
+    <string name="all_slots_required">Assign a task to every slot before starting.</string>
+    <string name="game_play">Enter Block Number</string>
+    <string name="block_number_hint">Block number (1–%1$d)</string>
+    <string name="invalid_block_number">Enter a number between 1 and %1$d</string>
+    <string name="end_game">End Game</string>
+    <string name="end_game_confirm">End the current game?</string>
+    <string name="select_task">Select Task</string>
+    <string name="tasks_needed">Tasks needed: %1$d</string>
+    <string name="total_blocks">Total blocks: %1$d</string>
+
+    <!-- Distributions -->
+    <string name="distributions">Distributions</string>
+    <string name="add_distribution">Add Distribution</string>
+    <string name="edit_distribution">Edit Distribution</string>
+    <string name="delete_distribution">Delete Distribution</string>
+    <string name="delete_distribution_confirm">Delete this distribution?</string>
+    <string name="no_distributions">No distributions yet. Tap + to add one.</string>
+    <string name="distribution_name">Distribution Name</string>
+    <string name="distribution_name_empty">Name cannot be empty</string>
+    <string name="groups">Groups</string>
+    <string name="add_group">Add Group</string>
+    <string name="group_count_label">Groups</string>
+    <string name="blocks_per_group_label">Blocks each</string>
+    <string name="distribution_total">Total: %1$d blocks, %2$d tasks needed</string>
+    <string name="distribution_invalid">All group values must be ≥ 1</string>
+
+    <!-- Settings -->
+    <string name="appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system_default">System</string>
+    <string name="language">Language</string>
+    <string name="dynamic_colors">Dynamic Colors</string>
+    <string name="dynamic_colors_desc">Use colors from your wallpaper (Android 12+)</string>
+    <string name="data">Data</string>
+    <string name="export_data">Export Data</string>
+    <string name="import_data">Import Data</string>
+    <string name="restore_data">Restore Last Backup</string>
+    <string name="export_success">Data exported successfully</string>
+    <string name="export_error">Export failed</string>
+    <string name="import_success">Data imported successfully</string>
+    <string name="import_error">Import failed</string>
+    <string name="restore_success">Backup restored successfully</string>
+    <string name="restore_error">Restore failed</string>
+    <string name="import_confirm_title">Import Data</string>
+    <string name="import_confirm_message">This will replace all existing data. A backup will be created automatically.</string>
+    <string name="restore_confirm_title">Restore Backup</string>
+    <string name="restore_confirm_message">This will replace all current data with the backup from the last import.</string>
+    <string name="about">About</string>
+    <string name="app_version">App Version</string>
+</resources>
