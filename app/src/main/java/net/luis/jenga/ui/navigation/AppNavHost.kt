@@ -82,7 +82,7 @@ fun AppNavHost(
             )
             GamePlayScreen(
                 viewModel = gameViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onEndGame = { navController.popBackStack(MainRoute, inclusive = false) }
             )
         }
 

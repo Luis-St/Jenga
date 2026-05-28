@@ -80,7 +80,11 @@ fun DistributionListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddDistribution) {
+            FloatingActionButton(
+                onClick = onAddDistribution,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_distribution))
             }
         }

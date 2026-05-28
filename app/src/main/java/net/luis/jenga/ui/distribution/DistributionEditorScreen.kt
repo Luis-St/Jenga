@@ -177,7 +177,10 @@ fun DistributionEditorScreen(
         },
         bottomBar = {
             if (!state.isLoading) {
-                Surface(tonalElevation = 3.dp) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shadowElevation = 3.dp
+                ) {
                     Button(
                         onClick = { scope.launch { if (viewModel.save()) onNavigateBack() } },
                         modifier = Modifier

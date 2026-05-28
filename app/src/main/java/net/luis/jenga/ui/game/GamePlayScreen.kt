@@ -43,7 +43,7 @@ import net.luis.jenga.R
 @Composable
 fun GamePlayScreen(
     viewModel: GameViewModel,
-    onNavigateBack: () -> Unit
+    onEndGame: () -> Unit
 ) {
     val state by viewModel.playState.collectAsState()
     var showEndDialog by remember { mutableStateOf(false) }
@@ -56,7 +56,7 @@ fun GamePlayScreen(
             confirmButton = {
                 Button(onClick = {
                     showEndDialog = false
-                    onNavigateBack()
+                    onEndGame()
                 }) { Text(stringResource(R.string.end_game)) }
             },
             dismissButton = {

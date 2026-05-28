@@ -22,13 +22,13 @@ val Gold80 = Color(0xFFF2BF48)
 val Gold90 = Color(0xFFFFDF9B)
 val Gold10 = Color(0xFF271900)
 
-// --- Warm brown (secondary) ---
-val Brown20 = Color(0xFF2B160A)
-val Brown30 = Color(0xFF5C4031)
-val Brown40 = Color(0xFF785A48)
-val Brown80 = Color(0xFFE6BFA9)
-val Brown90 = Color(0xFFFFDCC2)
-val Brown95 = Color(0xFF432B1C)
+// --- Neutral gray (secondary / tonal buttons) ---
+val Gray20 = Color(0xFF2E2E2E)
+val Gray30 = Color(0xFF444444)
+val Gray40 = Color(0xFF4F4F4F)
+val Gray50 = Color(0xFF6B6B6B)
+val Gray80 = Color(0xFFC7C7C7)
+val Gray90 = Color(0xFFE4E2E0)
 
 // --- Neutral grays (anchored on #242424) ---
 val Neutral6 = Color(0xFF121212)
