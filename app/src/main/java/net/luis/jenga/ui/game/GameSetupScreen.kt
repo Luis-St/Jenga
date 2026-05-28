@@ -17,8 +17,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -62,6 +64,12 @@ private sealed interface FolderSelection {
     data object Uncategorized : FolderSelection
 }
 
+/** What a pending random assignment should fill once a category is chosen. */
+private sealed interface RandomTarget {
+    data class Slot(val index: Int) : RandomTarget
+    data object All : RandomTarget
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameSetupScreen(
@@ -75,6 +83,31 @@ fun GameSetupScreen(
     var showDistributionMenu by remember { mutableStateOf(false) }
     var slotPickerIndex by remember { mutableStateOf<Int?>(null) }
     var taskSearchQuery by remember { mutableStateOf("") }
+    var randomTarget by remember { mutableStateOf<RandomTarget?>(null) }
+
+    fun applyRandom(target: RandomTarget, category: Category?) {
+        when (target) {
+            is RandomTarget.Slot -> viewModel.assignRandomToSlot(target.index, category)
+            RandomTarget.All -> viewModel.fillUnassignedRandomly(category)
+        }
+    }
+
+    // Skip the category picker entirely when no task has any category.
+    fun requestRandom(target: RandomTarget) {
+        if (state.availableCategories.isEmpty()) applyRandom(target, null)
+        else randomTarget = target
+    }
+
+    randomTarget?.let { target ->
+        RandomCategoryDialog(
+            categories = state.availableCategories,
+            onSelect = { category ->
+                applyRandom(target, category)
+                randomTarget = null
+            },
+            onDismiss = { randomTarget = null }
+        )
+    }
 
     slotPickerIndex?.let { slotIdx ->
         TaskPickerDialog(
@@ -207,7 +240,24 @@ fun GameSetupScreen(
 
             if (state.taskSlots.isNotEmpty()) {
                 item {
-                    Text(stringResource(R.string.task_slots), style = MaterialTheme.typography.bodyLarge)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            stringResource(R.string.task_slots),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(onClick = { requestRandom(RandomTarget.All) }) {
+                            Icon(
+                                Icons.Default.Shuffle,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                            Text(stringResource(R.string.fill_all_random))
+                        }
+                    }
                 }
                 itemsIndexed(state.taskSlots, key = { idx, _ -> idx }) { index, slot ->
                     val assigned = slot.assignedTask != null
@@ -234,6 +284,12 @@ fun GameSetupScreen(
                                 Text(
                                     slot.assignedTask?.title ?: stringResource(R.string.pick_task),
                                     style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                            IconButton(onClick = { requestRandom(RandomTarget.Slot(index)) }) {
+                                Icon(
+                                    Icons.Default.Casino,
+                                    contentDescription = stringResource(R.string.random_task)
                                 )
                             }
                         }
@@ -352,6 +408,42 @@ private fun tasksForSelection(grouped: Map<Category?, List<Task>>, selection: Fo
         is FolderSelection.Named -> grouped.entries.firstOrNull { it.key?.id == selection.category.id }?.value ?: emptyList()
         FolderSelection.Uncategorized -> grouped[null] ?: emptyList()
     }
+
+@Composable
+private fun RandomCategoryDialog(
+    categories: List<Category>,
+    onSelect: (Category?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.random_task)) },
+        text = {
+            LazyColumn {
+                item {
+                    ListItem(
+                        leadingContent = { Icon(Icons.Default.Casino, contentDescription = null) },
+                        headlineContent = { Text(stringResource(R.string.any_category)) },
+                        modifier = Modifier.clickable { onSelect(null) }
+                    )
+                    HorizontalDivider()
+                }
+                items(categories, key = { it.id }) { category ->
+                    ListItem(
+                        leadingContent = { Icon(Icons.Default.Folder, contentDescription = null) },
+                        headlineContent = { Text(category.name) },
+                        modifier = Modifier.clickable { onSelect(category) }
+                    )
+                    HorizontalDivider()
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
+}
 
 @Composable
 private fun FolderPickerItem(name: String, count: Int, onClick: () -> Unit) {

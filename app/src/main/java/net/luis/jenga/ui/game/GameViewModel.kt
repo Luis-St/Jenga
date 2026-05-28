@@ -13,8 +13,10 @@ import net.luis.jenga.JengaApp
 import net.luis.jenga.data.repository.DistributionRepository
 import net.luis.jenga.data.repository.SettingsRepository
 import net.luis.jenga.data.repository.TaskRepository
+import net.luis.jenga.domain.model.Category
 import net.luis.jenga.domain.model.Distribution
 import net.luis.jenga.domain.model.Task
+import net.luis.jenga.util.naturalOrder
 
 data class TaskSlot(
     val slotIndex: Int,
@@ -35,6 +37,12 @@ data class GameSetupUiState(
     val canStart: Boolean
         get() = selectedDistribution != null && taskSlots.isNotEmpty() && taskSlots.all { it.assignedTask != null }
     val tasksNeeded: Int get() = taskSlots.size
+
+    /** Distinct categories used by the current tasks, naturally ordered by name. */
+    val availableCategories: List<Category>
+        get() = allTasks.flatMap { it.categories }
+            .distinctBy { it.id }
+            .sortedWith(compareBy(naturalOrder) { it.name })
 }
 
 data class GamePlayUiState(
@@ -113,6 +121,39 @@ class GameViewModel(
             updated[slotIndex] = updated[slotIndex].copy(assignedTask = task)
         }
         _setupState.value = current.copy(taskSlots = updated)
+    }
+
+    /** Assigns a random task (optionally restricted to [category]) to a single slot. */
+    fun assignRandomToSlot(slotIndex: Int, category: Category?) {
+        val pool = tasksForCategory(category)
+        if (pool.isEmpty()) return
+        assignTaskToSlot(slotIndex, pool.random())
+    }
+
+    /**
+     * Fills every still-empty slot with a random task (optionally restricted to [category]),
+     * avoiding repeats while the pool lasts before drawing a fresh shuffled bag.
+     */
+    fun fillUnassignedRandomly(category: Category?) {
+        val current = _setupState.value
+        val pool = tasksForCategory(category)
+        if (pool.isEmpty()) return
+        val updated = current.taskSlots.toMutableList()
+        var bag = emptyList<Task>()
+        updated.forEachIndexed { index, slot ->
+            if (slot.assignedTask == null) {
+                if (bag.isEmpty()) bag = pool.shuffled()
+                updated[index] = slot.copy(assignedTask = bag.first())
+                bag = bag.drop(1)
+            }
+        }
+        _setupState.value = current.copy(taskSlots = updated)
+    }
+
+    private fun tasksForCategory(category: Category?): List<Task> {
+        val tasks = _setupState.value.allTasks
+        return if (category == null) tasks
+        else tasks.filter { task -> task.categories.any { it.id == category.id } }
     }
 
     fun startGame() {

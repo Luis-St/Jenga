@@ -53,6 +53,9 @@
         <item quantity="other">Platz %1$d (%2$d Blöcke)</item>
     </plurals>
     <string name="pick_task">Aufgabe wählen…</string>
+    <string name="random_task">Zufällige Aufgabe</string>
+    <string name="fill_all_random">Alle zufällig füllen</string>
+    <string name="any_category">Beliebige Kategorie</string>
     <string name="start_game">Spiel starten</string>
     <string name="all_slots_required">Weise jedem Platz eine Aufgabe zu bevor du startest.</string>
     <string name="game_play">Blocknummer eingeben</string>
