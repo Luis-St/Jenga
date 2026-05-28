@@ -33,19 +33,25 @@
     <string name="delete_category_confirm">Kategorie löschen? Aufgaben in dieser Kategorie werden nicht gelöscht.</string>
     <string name="no_categories">Noch keine Kategorien.</string>
     <string name="uncategorized">Ohne Kategorie</string>
+    <plurals name="task_count">
+        <item quantity="one">%1$d Aufgabe</item>
+        <item quantity="other">%1$d Aufgaben</item>
+    </plurals>
     <string name="search_tasks">Aufgaben suchen</string>
     <string name="task_title_empty">Titel darf nicht leer sein</string>
 
     <!-- Game -->
     <string name="game_setup">Spieleinrichtung</string>
     <string name="block_count">Blockanzahl</string>
-    <string name="default_52">Standard (52)</string>
-    <string name="reset_to_default">Auf 52 zurücksetzen</string>
     <string name="distribution">Verteilung</string>
-    <string name="no_distribution">Keine Verteilung (1 Aufgabe pro Block)</string>
+    <string name="select_distribution">Verteilung wählen</string>
+    <string name="no_matching_distributions">Keine Verteilungen für %1$d Blöcke. Tippe auf Bearbeiten um eine zu erstellen.</string>
     <string name="manage_distributions">Verteilungen verwalten</string>
     <string name="task_slots">Aufgabenplätze</string>
-    <string name="slot_label">Platz %1$d (%2$d Block(s))</string>
+    <plurals name="slot_label">
+        <item quantity="one">Platz %1$d (%2$d Block)</item>
+        <item quantity="other">Platz %1$d (%2$d Blöcke)</item>
+    </plurals>
     <string name="pick_task">Aufgabe wählen…</string>
     <string name="start_game">Spiel starten</string>
     <string name="all_slots_required">Weise jedem Platz eine Aufgabe zu bevor du startest.</string>
@@ -69,12 +75,15 @@
     <string name="distribution_name_empty">Name darf nicht leer sein</string>
     <string name="groups">Gruppen</string>
     <string name="add_group">Gruppe hinzufügen</string>
-    <string name="group_count_label">Gruppen</string>
-    <string name="blocks_per_group_label">Blöcke je</string>
+    <string name="group_count_label">Anzahl Gruppen</string>
+    <string name="blocks_per_group_label">Blöcke pro Gruppe</string>
     <string name="distribution_total">Gesamt: %1$d Blöcke, %2$d Aufgaben benötigt</string>
     <string name="distribution_invalid">Alle Gruppenwerte müssen ≥ 1 sein</string>
 
     <!-- Settings -->
+    <string name="game">Spiel</string>
+    <string name="default_block_count">Standard-Blockanzahl</string>
+    <string name="default_block_count_desc">Vorausgefüllte Blockanzahl bei der Spieleinrichtung</string>
     <string name="appearance">Erscheinungsbild</string>
     <string name="theme">Design</string>
     <string name="light">Hell</string>

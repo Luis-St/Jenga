@@ -12,6 +12,7 @@ import net.luis.jenga.data.local.AppDatabase
 import net.luis.jenga.data.repository.TaskRepository
 import net.luis.jenga.domain.model.Category
 import net.luis.jenga.domain.model.Task
+import net.luis.jenga.util.groupedByCategory
 
 data class TaskListUiState(
     val tasks: List<Task> = emptyList(),
@@ -23,12 +24,7 @@ data class TaskListUiState(
         else tasks.filter { it.title.contains(searchQuery, ignoreCase = true) }
 
     val tasksByCategory: Map<Category?, List<Task>>
-        get() = filteredTasks.flatMap { task ->
-            if (task.categories.isEmpty()) listOf(null to task)
-            else task.categories.map { cat -> cat to task }
-        }.groupBy({ it.first }, { it.second })
-            .entries.sortedBy { it.key?.name ?: "￿" }
-            .associate { it.key to it.value }
+        get() = filteredTasks.groupedByCategory()
 }
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {

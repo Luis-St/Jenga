@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,6 +26,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -36,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +73,11 @@ fun SettingsScreen(
     val factory = remember { SettingsViewModel.Factory(SettingsRepository(app)) }
     val viewModel: SettingsViewModel = viewModel(factory = factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    var blockCountText by remember { mutableStateOf(uiState.defaultBlockCount.toString()) }
+    LaunchedEffect(uiState.defaultBlockCount) {
+        blockCountText = uiState.defaultBlockCount.toString()
+    }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -239,6 +248,27 @@ fun SettingsScreen(
                 }
                 Switch(checked = uiState.dynamicColors, onCheckedChange = { viewModel.setDynamicColors(it) })
             }
+
+            Spacer(Modifier.height(24.dp))
+            SettingsSectionHeader(stringResource(R.string.game))
+
+            Text(stringResource(R.string.default_block_count), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                stringResource(R.string.default_block_count_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = blockCountText,
+                onValueChange = { input ->
+                    blockCountText = input
+                    input.toIntOrNull()?.let { if (it in 1..999) viewModel.setDefaultBlockCount(it) }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(Modifier.height(24.dp))
             SettingsSectionHeader(stringResource(R.string.data))

@@ -8,11 +8,12 @@ import net.luis.jenga.data.local.entity.TaskCategoryCrossRef
 import net.luis.jenga.data.local.entity.TaskEntity
 import net.luis.jenga.domain.model.Category
 import net.luis.jenga.domain.model.Task
+import net.luis.jenga.util.naturalOrder
 
 class TaskRepository(private val database: AppDatabase) {
 
     val allTasks: Flow<List<Task>> = database.taskDao().getAllWithCategories().map { list ->
-        list.map { it.toTask() }
+        list.map { it.toTask() }.sortedWith(compareBy(naturalOrder) { it.title })
     }
 
     val allCategories: Flow<List<Category>> = database.categoryDao().getAll().map { list ->
@@ -51,6 +52,7 @@ class TaskRepository(private val database: AppDatabase) {
 
     suspend fun getAllTasksOnce(): List<Task> =
         database.taskDao().getAllWithCategoriesOnce().map { it.toTask() }
+            .sortedWith(compareBy(naturalOrder) { it.title })
 
     suspend fun getAllCategoriesOnce(): List<Category> =
         database.categoryDao().getAllOnce().map { Category(it.id, it.name) }

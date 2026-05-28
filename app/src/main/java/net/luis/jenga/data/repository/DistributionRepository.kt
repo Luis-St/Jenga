@@ -7,13 +7,14 @@ import net.luis.jenga.data.local.AppDatabase
 import net.luis.jenga.data.local.entity.DistributionEntity
 import net.luis.jenga.domain.model.Distribution
 import net.luis.jenga.domain.model.DistributionGroup
+import net.luis.jenga.util.naturalOrder
 
 class DistributionRepository(private val database: AppDatabase) {
 
     private val json = Json { ignoreUnknownKeys = true }
 
     val allDistributions: Flow<List<Distribution>> = database.distributionDao().getAll().map { list ->
-        list.map { it.toDistribution() }
+        list.map { it.toDistribution() }.sortedWith(compareBy(naturalOrder) { it.name })
     }
 
     suspend fun getDistributionById(id: Long): Distribution? =
@@ -49,6 +50,7 @@ class DistributionRepository(private val database: AppDatabase) {
 
     suspend fun getAllDistributionsOnce(): List<Distribution> =
         database.distributionDao().getAllOnce().map { it.toDistribution() }
+            .sortedWith(compareBy(naturalOrder) { it.name })
 
     private fun DistributionEntity.toDistribution(): Distribution {
         val groups = try {

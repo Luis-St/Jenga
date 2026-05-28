@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import net.luis.jenga.data.local.AppDatabase
+import net.luis.jenga.JengaApp
 import net.luis.jenga.data.repository.DistributionRepository
+import net.luis.jenga.data.repository.SettingsRepository
 import net.luis.jenga.data.repository.TaskRepository
 import net.luis.jenga.domain.model.Distribution
-import net.luis.jenga.domain.model.DistributionGroup
 import net.luis.jenga.domain.model.Task
 
 data class TaskSlot(
@@ -28,9 +29,11 @@ data class GameSetupUiState(
     val taskSlots: List<TaskSlot> = emptyList(),
     val allTasks: List<Task> = emptyList(),
     val allDistributions: List<Distribution> = emptyList(),
+    val availableDistributions: List<Distribution> = emptyList(),
     val isLoaded: Boolean = false
 ) {
-    val canStart: Boolean get() = taskSlots.isNotEmpty() && taskSlots.all { it.assignedTask != null }
+    val canStart: Boolean
+        get() = selectedDistribution != null && taskSlots.isNotEmpty() && taskSlots.all { it.assignedTask != null }
     val tasksNeeded: Int get() = taskSlots.size
 }
 
@@ -44,7 +47,8 @@ data class GamePlayUiState(
 
 class GameViewModel(
     private val taskRepository: TaskRepository,
-    private val distributionRepository: DistributionRepository
+    private val distributionRepository: DistributionRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _setupState = MutableStateFlow(GameSetupUiState())
@@ -55,40 +59,51 @@ class GameViewModel(
 
     init {
         viewModelScope.launch {
+            val defaultBlocks = settingsRepository.defaultBlockCount.first()
+            _setupState.value = _setupState.value.copy(
+                blockCount = defaultBlocks,
+                blockCountText = defaultBlocks.toString()
+            )
             combine(taskRepository.allTasks, distributionRepository.allDistributions) { tasks, distributions ->
                 val current = _setupState.value
-                val slots = rebuildSlots(current.blockCount, current.selectedDistribution, emptyList())
+                val selected = current.selectedDistribution?.let { sel ->
+                    distributions.find { it.id == sel.id && it.totalBlocks == current.blockCount }
+                }
                 current.copy(
                     allTasks = tasks,
                     allDistributions = distributions,
-                    taskSlots = slots,
+                    availableDistributions = distributions.filter { it.totalBlocks == current.blockCount },
+                    selectedDistribution = selected,
+                    taskSlots = rebuildSlots(selected, current.taskSlots),
                     isLoaded = true
                 )
             }.collect { _setupState.value = it }
         }
     }
 
-    fun setBlockCount(count: Int) {
-        val clamped = count.coerceIn(1, 999)
-        val current = _setupState.value
-        val slots = rebuildSlots(clamped, current.selectedDistribution, current.taskSlots)
-        _setupState.value = current.copy(blockCount = clamped, blockCountText = clamped.toString(), taskSlots = slots)
-    }
-
     fun setBlockCountText(text: String) {
         val current = _setupState.value
-        _setupState.value = current.copy(blockCountText = text)
         val parsed = text.toIntOrNull()
         if (parsed != null && parsed in 1..999) {
-            val slots = rebuildSlots(parsed, current.selectedDistribution, current.taskSlots)
-            _setupState.value = _setupState.value.copy(blockCount = parsed, taskSlots = slots)
+            val selected = current.selectedDistribution?.takeIf { it.totalBlocks == parsed }
+            _setupState.value = current.copy(
+                blockCount = parsed,
+                blockCountText = text,
+                availableDistributions = current.allDistributions.filter { it.totalBlocks == parsed },
+                selectedDistribution = selected,
+                taskSlots = rebuildSlots(selected, current.taskSlots)
+            )
+        } else {
+            _setupState.value = current.copy(blockCountText = text)
         }
     }
 
-    fun selectDistribution(distribution: Distribution?) {
+    fun selectDistribution(distribution: Distribution) {
         val current = _setupState.value
-        val slots = rebuildSlots(current.blockCount, distribution, current.taskSlots)
-        _setupState.value = current.copy(selectedDistribution = distribution, taskSlots = slots)
+        _setupState.value = current.copy(
+            selectedDistribution = distribution,
+            taskSlots = rebuildSlots(distribution, current.taskSlots)
+        )
     }
 
     fun assignTaskToSlot(slotIndex: Int, task: Task?) {
@@ -140,12 +155,10 @@ class GameViewModel(
     }
 
     private fun rebuildSlots(
-        blockCount: Int,
         distribution: Distribution?,
         previousSlots: List<TaskSlot>
     ): List<TaskSlot> {
-        val groups = distribution?.groups
-            ?: listOf(DistributionGroup(groupCount = blockCount, blockCount = 1))
+        val groups = distribution?.groups ?: return emptyList()
 
         val expanded = groups.flatMap { group ->
             List(group.groupCount) { group.blockCount }
@@ -157,9 +170,13 @@ class GameViewModel(
         }
     }
 
-    class Factory(private val database: AppDatabase) : ViewModelProvider.Factory {
+    class Factory(private val app: JengaApp) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            GameViewModel(TaskRepository(database), DistributionRepository(database)) as T
+            GameViewModel(
+                TaskRepository(app.database),
+                DistributionRepository(app.database),
+                SettingsRepository(app)
+            ) as T
     }
 }

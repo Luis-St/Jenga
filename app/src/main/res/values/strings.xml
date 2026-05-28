@@ -33,19 +33,25 @@
     <string name="delete_category_confirm">Delete category? Tasks in this category will not be deleted.</string>
     <string name="no_categories">No categories yet.</string>
     <string name="uncategorized">Uncategorized</string>
+    <plurals name="task_count">
+        <item quantity="one">%1$d task</item>
+        <item quantity="other">%1$d tasks</item>
+    </plurals>
     <string name="search_tasks">Search tasks</string>
     <string name="task_title_empty">Title cannot be empty</string>
 
     <!-- Game -->
     <string name="game_setup">Game Setup</string>
     <string name="block_count">Block Count</string>
-    <string name="default_52">Default (52)</string>
-    <string name="reset_to_default">Reset to 52</string>
     <string name="distribution">Distribution</string>
-    <string name="no_distribution">No distribution (1 task per block)</string>
+    <string name="select_distribution">Select distribution</string>
+    <string name="no_matching_distributions">No distributions for %1$d blocks. Tap edit to create one.</string>
     <string name="manage_distributions">Manage Distributions</string>
     <string name="task_slots">Task Slots</string>
-    <string name="slot_label">Slot %1$d (%2$d block(s))</string>
+    <plurals name="slot_label">
+        <item quantity="one">Slot %1$d (%2$d block)</item>
+        <item quantity="other">Slot %1$d (%2$d blocks)</item>
+    </plurals>
     <string name="pick_task">Pick task…</string>
     <string name="start_game">Start Game</string>
     <string name="all_slots_required">Assign a task to every slot before starting.</string>
@@ -69,12 +75,15 @@
     <string name="distribution_name_empty">Name cannot be empty</string>
     <string name="groups">Groups</string>
     <string name="add_group">Add Group</string>
-    <string name="group_count_label">Groups</string>
-    <string name="blocks_per_group_label">Blocks each</string>
+    <string name="group_count_label">Number of groups</string>
+    <string name="blocks_per_group_label">Blocks per group</string>
     <string name="distribution_total">Total: %1$d blocks, %2$d tasks needed</string>
     <string name="distribution_invalid">All group values must be ≥ 1</string>
 
     <!-- Settings -->
+    <string name="game">Game</string>
+    <string name="default_block_count">Default block count</string>
+    <string name="default_block_count_desc">Pre-filled block count when setting up a game</string>
     <string name="appearance">Appearance</string>
     <string name="theme">Theme</string>
     <string name="light">Light</string>

@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -25,7 +27,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,11 +46,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import net.luis.jenga.R
+import net.luis.jenga.domain.model.Category
 import net.luis.jenga.domain.model.Task
+import net.luis.jenga.util.groupedByCategory
+
+private sealed interface FolderSelection {
+    data class Named(val category: Category) : FolderSelection
+    data object Uncategorized : FolderSelection
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,21 +115,13 @@ fun GameSetupScreen(
                 Spacer(Modifier.height(4.dp))
                 Text(stringResource(R.string.block_count), style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = state.blockCountText,
-                        onValueChange = { viewModel.setBlockCountText(it) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilledTonalButton(onClick = { viewModel.setBlockCount(52) }) {
-                        Text(stringResource(R.string.default_52))
-                    }
-                }
+                OutlinedTextField(
+                    value = state.blockCountText,
+                    onValueChange = { viewModel.setBlockCountText(it) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             item {
@@ -137,7 +139,7 @@ fun GameSetupScreen(
                         ) {
                             Text(
                                 text = state.selectedDistribution?.name
-                                    ?: stringResource(R.string.no_distribution),
+                                    ?: stringResource(R.string.select_distribution),
                                 modifier = Modifier.weight(1f)
                             )
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
@@ -146,30 +148,31 @@ fun GameSetupScreen(
                             expanded = showDistributionMenu,
                             onDismissRequest = { showDistributionMenu = false }
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.no_distribution)) },
-                                onClick = {
-                                    viewModel.selectDistribution(null)
-                                    showDistributionMenu = false
-                                }
-                            )
-                            state.allDistributions.forEach { dist ->
+                            if (state.availableDistributions.isEmpty()) {
                                 DropdownMenuItem(
-                                    text = {
-                                        Column {
-                                            Text(dist.name)
-                                            Text(
-                                                stringResource(R.string.distribution_total, dist.totalBlocks, dist.tasksNeeded),
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        viewModel.selectDistribution(dist)
-                                        showDistributionMenu = false
-                                    }
+                                    text = { Text(stringResource(R.string.no_matching_distributions, state.blockCount)) },
+                                    onClick = { showDistributionMenu = false },
+                                    enabled = false
                                 )
+                            } else {
+                                state.availableDistributions.forEach { dist ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Column {
+                                                Text(dist.name)
+                                                Text(
+                                                    stringResource(R.string.distribution_total, dist.totalBlocks, dist.tasksNeeded),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.selectDistribution(dist)
+                                            showDistributionMenu = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -184,6 +187,13 @@ fun GameSetupScreen(
                         stringResource(R.string.tasks_needed, state.tasksNeeded),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else if (state.availableDistributions.isEmpty()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.no_matching_distributions, state.blockCount),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -207,7 +217,7 @@ fun GameSetupScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    stringResource(R.string.slot_label, index + 1, slot.blockCount),
+                                    pluralStringResource(R.plurals.slot_label, slot.blockCount, index + 1, slot.blockCount),
                                     style = MaterialTheme.typography.labelMedium
                                 )
                                 Text(
@@ -259,12 +269,35 @@ private fun TaskPickerDialog(
     onSelect: (Task) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val filtered = if (searchQuery.isBlank()) tasks
-    else tasks.filter { it.title.contains(searchQuery, ignoreCase = true) }
+    var openFolder by remember { mutableStateOf<FolderSelection?>(null) }
+    val grouped = remember(tasks) { tasks.groupedByCategory() }
+    val searching = searchQuery.isNotBlank()
+    val filtered = remember(tasks, searchQuery) {
+        if (searching) tasks.filter { it.title.contains(searchQuery, ignoreCase = true) } else emptyList()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.select_task)) },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        title = {
+            val folder = openFolder
+            if (!searching && folder != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { openFolder = null }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                    Text(
+                        when (folder) {
+                            is FolderSelection.Named -> folder.category.name
+                            FolderSelection.Uncategorized -> stringResource(R.string.uncategorized)
+                        }
+                    )
+                }
+            } else {
+                Text(stringResource(R.string.select_task))
+            }
+        },
         text = {
             Column {
                 OutlinedTextField(
@@ -276,16 +309,25 @@ private fun TaskPickerDialog(
                 )
                 Spacer(Modifier.height(8.dp))
                 LazyColumn {
-                    items(filtered.size) { idx ->
-                        val task = filtered[idx]
-                        ListItem(
-                            headlineContent = { Text(task.title) },
-                            supportingContent = if (task.description.isNotBlank()) {
-                                { Text(task.description, maxLines = 1) }
-                            } else null,
-                            modifier = Modifier.clickable { onSelect(task) }
-                        )
-                        if (idx < filtered.lastIndex) HorizontalDivider()
+                    when {
+                        searching -> items(filtered, key = { it.id }) { task ->
+                            TaskPickerItem(task) { onSelect(task) }
+                        }
+
+                        openFolder == null -> items(grouped.entries.toList(), key = { it.key?.id ?: -1L }) { (category, catTasks) ->
+                            FolderPickerItem(
+                                name = category?.name ?: stringResource(R.string.uncategorized),
+                                count = catTasks.size,
+                                onClick = {
+                                    openFolder = if (category == null) FolderSelection.Uncategorized
+                                    else FolderSelection.Named(category)
+                                }
+                            )
+                        }
+
+                        else -> items(tasksForSelection(grouped, openFolder!!), key = { it.id }) { task ->
+                            TaskPickerItem(task) { onSelect(task) }
+                        }
                     }
                 }
             }
@@ -295,4 +337,33 @@ private fun TaskPickerDialog(
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+private fun tasksForSelection(grouped: Map<Category?, List<Task>>, selection: FolderSelection): List<Task> =
+    when (selection) {
+        is FolderSelection.Named -> grouped.entries.firstOrNull { it.key?.id == selection.category.id }?.value ?: emptyList()
+        FolderSelection.Uncategorized -> grouped[null] ?: emptyList()
+    }
+
+@Composable
+private fun FolderPickerItem(name: String, count: Int, onClick: () -> Unit) {
+    ListItem(
+        leadingContent = { Icon(Icons.Default.Folder, contentDescription = null) },
+        headlineContent = { Text(name) },
+        trailingContent = { Text(pluralStringResource(R.plurals.task_count, count, count)) },
+        modifier = Modifier.clickable(onClick = onClick)
+    )
+    HorizontalDivider()
+}
+
+@Composable
+private fun TaskPickerItem(task: Task, onClick: () -> Unit) {
+    ListItem(
+        headlineContent = { Text(task.title) },
+        supportingContent = if (task.description.isNotBlank()) {
+            { Text(task.description, maxLines = 1) }
+        } else null,
+        modifier = Modifier.clickable(onClick = onClick)
+    )
+    HorizontalDivider()
 }

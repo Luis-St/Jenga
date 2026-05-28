@@ -15,7 +15,8 @@ import net.luis.jenga.domain.model.ThemeMode
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColors: Boolean = true,
-    val appLanguage: AppLanguage = AppLanguage.SYSTEM
+    val appLanguage: AppLanguage = AppLanguage.SYSTEM,
+    val defaultBlockCount: Int = 52
 )
 
 class SettingsViewModel(
@@ -30,9 +31,15 @@ class SettingsViewModel(
             combine(
                 settingsRepository.themeMode,
                 settingsRepository.dynamicColors,
-                settingsRepository.appLanguage
-            ) { mode, dynamic, lang ->
-                SettingsUiState(themeMode = mode, dynamicColors = dynamic, appLanguage = lang)
+                settingsRepository.appLanguage,
+                settingsRepository.defaultBlockCount
+            ) { mode, dynamic, lang, blockCount ->
+                SettingsUiState(
+                    themeMode = mode,
+                    dynamicColors = dynamic,
+                    appLanguage = lang,
+                    defaultBlockCount = blockCount
+                )
             }.collect { _uiState.value = it }
         }
     }
@@ -47,6 +54,10 @@ class SettingsViewModel(
 
     fun setAppLanguage(language: AppLanguage) {
         viewModelScope.launch { settingsRepository.setAppLanguage(language) }
+    }
+
+    fun setDefaultBlockCount(count: Int) {
+        viewModelScope.launch { settingsRepository.setDefaultBlockCount(count) }
     }
 
     class Factory(private val settingsRepository: SettingsRepository) : ViewModelProvider.Factory {

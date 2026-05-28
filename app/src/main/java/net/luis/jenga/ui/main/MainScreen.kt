@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
@@ -31,6 +32,7 @@ import net.luis.jenga.R
 @Composable
 fun MainScreen(
     onNavigateTasks: () -> Unit,
+    onNavigateDistributions: () -> Unit,
     onNavigatePlay: () -> Unit,
     onNavigateSettings: () -> Unit
 ) {
@@ -71,6 +73,25 @@ fun MainScreen(
                 )
                 Text(
                     text = stringResource(R.string.tasks),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onNavigateDistributions,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.EditNote,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.distributions),
                     style = MaterialTheme.typography.titleMedium
                 )
             }

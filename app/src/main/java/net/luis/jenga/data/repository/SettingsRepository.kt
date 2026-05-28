@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,7 @@ class SettingsRepository(private val context: Context) {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val DYNAMIC_COLORS = booleanPreferencesKey("dynamic_colors")
         val APP_LANGUAGE = stringPreferencesKey("app_language")
+        val DEFAULT_BLOCK_COUNT = intPreferencesKey("default_block_count")
     }
 
     val themeMode: Flow<ThemeMode> = context.dataStore.data.map { prefs ->
@@ -34,6 +36,10 @@ class SettingsRepository(private val context: Context) {
         AppLanguage.valueOf(prefs[Keys.APP_LANGUAGE] ?: AppLanguage.SYSTEM.name)
     }
 
+    val defaultBlockCount: Flow<Int> = context.dataStore.data.map { prefs ->
+        prefs[Keys.DEFAULT_BLOCK_COUNT] ?: 52
+    }
+
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { it[Keys.THEME_MODE] = mode.name }
     }
@@ -44,5 +50,9 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setAppLanguage(language: AppLanguage) {
         context.dataStore.edit { it[Keys.APP_LANGUAGE] = language.name }
+    }
+
+    suspend fun setDefaultBlockCount(count: Int) {
+        context.dataStore.edit { it[Keys.DEFAULT_BLOCK_COUNT] = count }
     }
 }

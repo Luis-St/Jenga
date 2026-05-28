@@ -33,6 +33,7 @@ fun AppNavHost(
         composable<MainRoute> {
             MainScreen(
                 onNavigateTasks = { navController.navigate(TaskListRoute) },
+                onNavigateDistributions = { navController.navigate(DistributionListRoute) },
                 onNavigatePlay = { navController.navigate(GameSetupRoute) },
                 onNavigateSettings = { navController.navigate(SettingsRoute) }
             )
@@ -61,7 +62,7 @@ fun AppNavHost(
         composable<GameSetupRoute> { backStackEntry ->
             val gameViewModel: GameViewModel = viewModel(
                 viewModelStoreOwner = backStackEntry,
-                factory = GameViewModel.Factory(app.database)
+                factory = GameViewModel.Factory(app)
             )
             GameSetupScreen(
                 viewModel = gameViewModel,
@@ -77,7 +78,7 @@ fun AppNavHost(
             }
             val gameViewModel: GameViewModel = viewModel(
                 viewModelStoreOwner = gameSetupEntry,
-                factory = GameViewModel.Factory(app.database)
+                factory = GameViewModel.Factory(app)
             )
             GamePlayScreen(
                 viewModel = gameViewModel,

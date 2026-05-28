@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -27,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -174,6 +174,20 @@ fun DistributionEditorScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            if (!state.isLoading) {
+                Surface(tonalElevation = 3.dp) {
+                    Button(
+                        onClick = { scope.launch { if (viewModel.save()) onNavigateBack() } },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(stringResource(R.string.save))
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         if (state.isLoading) return@Scaffold
@@ -198,6 +212,7 @@ fun DistributionEditorScreen(
             )
 
             Card(
+                modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
@@ -226,14 +241,6 @@ fun DistributionEditorScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
                 Text(stringResource(R.string.add_group))
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Button(
-                onClick = { scope.launch { if (viewModel.save()) onNavigateBack() } },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.save))
             }
         }
     }
