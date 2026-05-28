@@ -17,21 +17,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -46,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,10 +67,10 @@ private sealed interface FolderSelection {
 fun GameSetupScreen(
     viewModel: GameViewModel,
     onNavigateBack: () -> Unit,
-    onStartGame: () -> Unit,
-    onManageDistributions: () -> Unit
+    onStartGame: () -> Unit
 ) {
     val state by viewModel.setupState.collectAsState()
+    val focusManager = LocalFocusManager.current
 
     var showDistributionMenu by remember { mutableStateOf(false) }
     var slotPickerIndex by remember { mutableStateOf<Int?>(null) }
@@ -127,57 +128,63 @@ fun GameSetupScreen(
             item {
                 Text(stringResource(R.string.distribution), style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ExposedDropdownMenuBox(
+                    expanded = showDistributionMenu,
+                    onExpandedChange = {
+                        focusManager.clearFocus()
+                        showDistributionMenu = it
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        OutlinedButton(
-                            onClick = { showDistributionMenu = true },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = state.selectedDistribution?.name
-                                    ?: stringResource(R.string.select_distribution),
-                                modifier = Modifier.weight(1f)
+                    OutlinedButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            showDistributionMenu = true
+                        },
+                        modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = state.selectedDistribution?.name
+                                ?: stringResource(R.string.select_distribution),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                    }
+                    ExposedDropdownMenu(
+                        expanded = showDistributionMenu,
+                        onDismissRequest = { showDistributionMenu = false }
+                    ) {
+                        if (state.availableDistributions.isEmpty()) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.no_matching_distributions, state.blockCount)) },
+                                onClick = { showDistributionMenu = false },
+                                enabled = false
                             )
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                        }
-                        DropdownMenu(
-                            expanded = showDistributionMenu,
-                            onDismissRequest = { showDistributionMenu = false }
-                        ) {
-                            if (state.availableDistributions.isEmpty()) {
+                        } else {
+                            state.availableDistributions.forEach { dist ->
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.no_matching_distributions, state.blockCount)) },
-                                    onClick = { showDistributionMenu = false },
-                                    enabled = false
-                                )
-                            } else {
-                                state.availableDistributions.forEach { dist ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Column {
-                                                Text(dist.name)
-                                                Text(
-                                                    stringResource(R.string.distribution_total, dist.totalBlocks, dist.tasksNeeded),
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                )
-                                            }
-                                        },
-                                        onClick = {
-                                            viewModel.selectDistribution(dist)
-                                            showDistributionMenu = false
+                                    text = {
+                                        Column(modifier = Modifier.fillMaxWidth()) {
+                                            Text(
+                                                dist.name,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                            Text(
+                                                stringResource(R.string.distribution_total, dist.totalBlocks, dist.tasksNeeded),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
                                         }
-                                    )
-                                }
+                                    },
+                                    onClick = {
+                                        viewModel.selectDistribution(dist)
+                                        showDistributionMenu = false
+                                    }
+                                )
                             }
                         }
-                    }
-                    IconButton(onClick = onManageDistributions) {
-                        Icon(Icons.Default.EditNote, contentDescription = stringResource(R.string.manage_distributions))
                     }
                 }
 
@@ -203,11 +210,15 @@ fun GameSetupScreen(
                     Text(stringResource(R.string.task_slots), style = MaterialTheme.typography.bodyLarge)
                 }
                 itemsIndexed(state.taskSlots, key = { idx, _ -> idx }) { index, slot ->
+                    val assigned = slot.assignedTask != null
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = if (slot.assignedTask != null)
-                                MaterialTheme.colorScheme.primaryContainer
-                            else MaterialTheme.colorScheme.surfaceVariant
+                            containerColor = if (assigned)
+                                MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = if (assigned)
+                                MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSecondaryContainer
                         ),
                         modifier = Modifier.fillMaxWidth().clickable { slotPickerIndex = index }
                     ) {
@@ -222,10 +233,7 @@ fun GameSetupScreen(
                                 )
                                 Text(
                                     slot.assignedTask?.title ?: stringResource(R.string.pick_task),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = if (slot.assignedTask != null)
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                                    style = MaterialTheme.typography.bodyMedium
                                 )
                             }
                         }

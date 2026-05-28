@@ -67,8 +67,7 @@ fun AppNavHost(
             GameSetupScreen(
                 viewModel = gameViewModel,
                 onNavigateBack = { navController.popBackStack() },
-                onStartGame = { navController.navigate(GamePlayRoute) },
-                onManageDistributions = { navController.navigate(DistributionListRoute) }
+                onStartGame = { navController.navigate(GamePlayRoute) }
             )
         }
 
