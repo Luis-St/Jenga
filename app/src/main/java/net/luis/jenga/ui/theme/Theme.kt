@@ -8,18 +8,85 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Orange80,
-    secondary = OrangeGrey80,
-    tertiary = DeepOrange80
+    primary = Orange70,
+    onPrimary = Orange10,
+    primaryContainer = Orange40,
+    onPrimaryContainer = Orange90,
+    inversePrimary = Orange60,
+    secondary = Brown80,
+    onSecondary = Brown95,
+    secondaryContainer = Brown30,
+    onSecondaryContainer = Brown90,
+    tertiary = Gold80,
+    onTertiary = Gold20,
+    tertiaryContainer = Gold30,
+    onTertiaryContainer = Gold90,
+    background = Neutral20,
+    onBackground = OnSurfaceDark,
+    surface = Neutral20,
+    onSurface = OnSurfaceDark,
+    surfaceVariant = NeutralVariant30,
+    onSurfaceVariant = NeutralVariant80,
+    surfaceTint = Orange70,
+    surfaceDim = Neutral10,
+    surfaceBright = NeutralBright,
+    surfaceContainerLowest = Neutral6,
+    surfaceContainerLow = Neutral12,
+    surfaceContainer = Neutral20,
+    surfaceContainerHigh = Neutral24,
+    surfaceContainerHighest = Neutral30,
+    inverseSurface = Neutral90,
+    inverseOnSurface = Neutral20,
+    outline = NeutralVariant60,
+    outlineVariant = NeutralVariant30,
+    scrim = Color.Black,
+    error = Red80,
+    onError = Red20,
+    errorContainer = Red30,
+    onErrorContainer = Red90
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Orange40,
-    secondary = OrangeGrey40,
-    tertiary = DeepOrange40
+    primary = Orange60,
+    onPrimary = Color.White,
+    primaryContainer = Orange90,
+    onPrimaryContainer = Orange10,
+    inversePrimary = Orange80,
+    secondary = Brown40,
+    onSecondary = Color.White,
+    secondaryContainer = Brown90,
+    onSecondaryContainer = Brown20,
+    tertiary = Gold40,
+    onTertiary = Color.White,
+    tertiaryContainer = Gold90,
+    onTertiaryContainer = Gold10,
+    background = Neutral98,
+    onBackground = OnSurfaceLight,
+    surface = Surface98,
+    onSurface = OnSurfaceLight,
+    surfaceVariant = NeutralVariant90,
+    onSurfaceVariant = NeutralVariant20,
+    surfaceTint = Orange60,
+    surfaceDim = SurfaceDimLight,
+    surfaceBright = Surface98,
+    surfaceContainerLowest = Neutral99,
+    surfaceContainerLow = SurfaceLow,
+    surfaceContainer = SurfaceContainer,
+    surfaceContainerHigh = SurfaceHigh,
+    surfaceContainerHighest = SurfaceHighest,
+    inverseSurface = Neutral20,
+    inverseOnSurface = Neutral95,
+    outline = NeutralVariant50,
+    outlineVariant = NeutralVariant80,
+    scrim = Color.Black,
+    error = Red40,
+    onError = Color.White,
+    errorContainer = Red90,
+    onErrorContainer = Red10
 )
 
 @Composable

@@ -2,10 +2,71 @@ package net.luis.jenga.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Orange80 = Color(0xFFFFB74D)
-val OrangeGrey80 = Color(0xFFD7C4A7)
-val DeepOrange80 = Color(0xFFFF8A65)
+// --- Brand orange (#E36E00) tonal range ---
+val Orange10 = Color(0xFF351900)
+val Orange20 = Color(0xFF562B00)
+val Orange30 = Color(0xFF7A3F00)
+val Orange40 = Color(0xFFA15400)
+val Orange50 = Color(0xFFC66700)
+val Orange60 = Color(0xFFE36E00) // brand color
+val Orange70 = Color(0xFFFF8C32)
+val Orange80 = Color(0xFFFFB783)
+val Orange90 = Color(0xFFFFDCC2)
+val Orange95 = Color(0xFFFFEDE2)
 
-val Orange40 = Color(0xFFE65100)
-val OrangeGrey40 = Color(0xFF795548)
-val DeepOrange40 = Color(0xFFBF360C)
+// --- Warm gold accent (tertiary) ---
+val Gold20 = Color(0xFF402D00)
+val Gold30 = Color(0xFF5E4200)
+val Gold40 = Color(0xFF7D5800)
+val Gold80 = Color(0xFFF2BF48)
+val Gold90 = Color(0xFFFFDF9B)
+val Gold10 = Color(0xFF271900)
+
+// --- Warm brown (secondary) ---
+val Brown20 = Color(0xFF2B160A)
+val Brown30 = Color(0xFF5C4031)
+val Brown40 = Color(0xFF785A48)
+val Brown80 = Color(0xFFE6BFA9)
+val Brown90 = Color(0xFFFFDCC2)
+val Brown95 = Color(0xFF432B1C)
+
+// --- Neutral grays (anchored on #242424) ---
+val Neutral6 = Color(0xFF121212)
+val Neutral10 = Color(0xFF1A1A1A)
+val Neutral12 = Color(0xFF1E1E1E)
+val Neutral20 = Color(0xFF242424) // primary dark surface/background
+val Neutral24 = Color(0xFF2E2E2E)
+val Neutral30 = Color(0xFF393939)
+val NeutralBright = Color(0xFF3A3A3A)
+val Neutral90 = Color(0xFFEAE1DB)
+val Neutral95 = Color(0xFFF5E5DC)
+val Neutral98 = Color(0xFFFFF8F5)
+val Neutral99 = Color(0xFFFFFFFF)
+
+// Light surface tones
+val Surface98 = Color(0xFFFFF8F5)
+val SurfaceLow = Color(0xFFFFF1E9)
+val SurfaceContainer = Color(0xFFFBEBE1)
+val SurfaceHigh = Color(0xFFF5E5DC)
+val SurfaceHighest = Color(0xFFEFE0D6)
+val SurfaceDimLight = Color(0xFFE6D8D0)
+
+// --- Warm neutral variants (outlines / surfaceVariant) ---
+val NeutralVariant30 = Color(0xFF4F453D)
+val NeutralVariant50 = Color(0xFF847469)
+val NeutralVariant60 = Color(0xFFA08D82)
+val NeutralVariant80 = Color(0xFFD7C2B5)
+val NeutralVariant90 = Color(0xFFF4DECF)
+val NeutralVariant20 = Color(0xFF52443A)
+
+// --- Text on neutral surfaces ---
+val OnSurfaceLight = Color(0xFF1F1B18)
+val OnSurfaceDark = Color(0xFFEAE1DB)
+
+// --- Error (standard Material 3 red) ---
+val Red40 = Color(0xFFBA1A1A)
+val Red80 = Color(0xFFFFB4AB)
+val Red90 = Color(0xFFFFDAD6)
+val Red30 = Color(0xFF93000A)
+val Red20 = Color(0xFF690005)
+val Red10 = Color(0xFF410002)
